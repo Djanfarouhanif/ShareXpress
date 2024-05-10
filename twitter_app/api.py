@@ -17,17 +17,20 @@ def ApiInformations(API_INFO):
 
         redirect = auth.get_authorization_url()
         
-        print(redirect)
-
         return redirect, auth
     except:
         return None
 
 def redirectTwitterPage():
-    return ApiInformations(API_INFO)
+    if ApiInformations(API_INFO) is not None:
+        redi  = ApiInformations(API_INFO)
+        return redi[0]
+
 
 def exchange_code_for_acces_token(code):
-    redirec, auth =redirectTwitterPage()
+    if ApiInformations(API_INFO):
+
+        auth[1] =redirectTwitterPage()
     try:
 
         access_token_url = 'https://api.twitter.com/oauth/access_token'

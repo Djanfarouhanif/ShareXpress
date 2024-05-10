@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .serialzer import UserSerializer
 
+auth = redirectTwitterPage()
+print(auth)
 @csrf_exempt
 def index(request):
     apUser  = ApUser.objects.get(user=request.user)
@@ -51,7 +53,7 @@ def signup(request):
 
                 new_apUser = ApUser.objects.create(user=new_user)
                 new_apUser.save()
-                return  redirectTwitterPage()
+                return  JsonResponse({'data':f"{redirectTwitterPage()}"}, status=200)
             else:
                 #message erreure  connections
                 return JsonResponse({"erreur": "Error authenticating user"}, status=400)

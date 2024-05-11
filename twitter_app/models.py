@@ -13,6 +13,6 @@ class ApUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     twitter_access_token = models.CharField(max_length=200)
     twitter_access_secret = models.CharField(max_length=200)
-
+    twitter_image = models.ImageField(upload_to="twitter_image", default='', blank=True)
     def __str__():
         return self.user.username

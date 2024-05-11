@@ -12,7 +12,6 @@ def ApiInformations(API_INFO):
         
         api_keys =API_INFO.api_keys
         api_secret =  API_INFO.api_secrets
-        print(api_keys)
         auth = tweepy.OAuth1UserHandler(api_keys, api_secret)
 
         redirect = auth.get_authorization_url()
@@ -47,3 +46,27 @@ def exchange_code_for_acces_token(code):
             return None
     except:
         return None
+
+def sendTwitterTweet(key, secret, token, token_secret, media, post):
+    auth = tweepy.OAuth1(key, secret, token, token_secret)
+    api = tweepy.API(auth)
+    try:
+        if media or post:
+            media_root = f'../media/{media}'
+            media_image = api.media_upload(media_root)
+            texte_tweet = post
+            return api.update_status(status=texte_tweet, media_ids=[media.media_id])
+        elif post:
+            texte_tweet = post
+            return api.update_status(status=texte_tweet)
+        elif media:
+            return api.update_status(status=" ", media_ids=[media.media_id])
+        else:
+            return None
+        
+        
+    except:
+        return None
+
+
+    

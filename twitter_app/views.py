@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from .api import redirectTwitterPage, exchange_code_for_acces_token
-from .models import ApUser
+from .models import ApUser, ApiKeys
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .serialzer import UserSerializer
@@ -11,18 +11,24 @@ auth = redirectTwitterPage()
 print(auth)
 @csrf_exempt
 def index(request):
+    apiKeys = ApiKeys.objects.first()
     apUser  = ApUser.objects.get(user=request.user)
-    if request.method == 'POST':
-        #Recuper les token de l'utisateur
-        Code_verification = request.POST.get("code", None)
-        access_token, access_token_secret = exchange_code_for_acces_token(Code_verification)
+    
 
+@csrf_exempt
+def profile(request):
+    apUser = ApUser.objects.get(user=request.user)
+    if request.method == 'POST':
+        #Recuper les token des Api
+        #Token de Twitre------------------------------------------------:
+        code_verification = request.POST.get("code", None)
+        access_token, access_token_secret = exchange_code_for_acces_toke(code_verification)
+        
         apUser.twitter_access_token = access_token
         apUser.twitter_access_secret = access_token_secret
         apUser.save()
-        return JsonResponse({'succes':True})
 
-    return JsonResponse({"error": 'Method Not Allowed'}, status=405)
+        return JsonResponse({"succes":True}, status=200)
 
 
 @csrf_exempt

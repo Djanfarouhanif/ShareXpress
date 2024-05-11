@@ -29,8 +29,9 @@ def redirectTwitterPage():
 
 def exchange_code_for_acces_token(code):
     if ApiInformations(API_INFO):
-
-        auth[1] =redirectTwitterPage()
+        #Authentification get
+        Auth[1] = ApiInformations(API_INFO)
+        auth = Auth[1]
     try:
 
         access_token_url = 'https://api.twitter.com/oauth/access_token'

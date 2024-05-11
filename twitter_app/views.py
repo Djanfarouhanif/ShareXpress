@@ -51,6 +51,8 @@ def profile(request):
         apUser.save()
 
         return Response({"succes":True}, status=200)
+    else:
+        return Response({"error": "Method Not Allowed"}, status=405)
 
 @api_view(['POST'])
 def signup(request):
@@ -104,6 +106,7 @@ def signin(request):
             #meessage
             return Response({'erreure': "Error authenfications user"}, status=400)
     return Response({"erreur": "Method Not Allowed"}, status=405)
+
 @login_required(login_url='signin')
 @api_view(['GET'])
 def logout(request):

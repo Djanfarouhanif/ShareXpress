@@ -11,7 +11,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-@login_required(login_url="signin")
 @api_view(['POST'])
 def index(request):
     apiKeys = ApiKeys.objects.first()
@@ -36,7 +35,7 @@ def index(request):
 
     
 
-@csrf_exempt
+
 @api_view(['POST'])
 def profile(request):
     apUser = ApUser.objects.get(user=request.user)
@@ -56,30 +55,34 @@ def profile(request):
 
 @api_view(['POST'])
 def signup(request):
-    if reqeust.method == "POST":
+    if request.method == "POST":
         username = request.POST.get('username', None)
         email = request.POST.get('email', None)
-        password = request.POST.get("passowrd", None)
+        password = request.POST.get("password", None)
         password2 = request.POST.get('password2', None)
+        if username is None or email is None or password is None or password2 is None:
+            return Response({"erreur":f" data is none{username}, {email}, {password}, {password2}"}, status=500)
 
-        if len(password) < 7 :
+        elif len(password) < 7 :
             
             return Response({"erreur": "password is not securite"}, status=400)
-        elif password != passowrd2:
+        elif password != password2:
             #signup page
             return Response({"erreur": "Password not macthing"}, status=400)
         elif User.objects.filter(email=email).exists():
             #email exists
-            return Response({'erreure', 'Email exists alredy'}, status=400)
+            return Response({'erreure': 'Email exists alredy'}, status=400)
         else:
+            
             new_user = User.objects.create_user(username=username, email=email, password=password)
             new_user.save()
-
+            
             user_login = User.objects.get(username=new_user.username, email=new_user.email)
-            auth = authenticate(request, user_login)
+           
+            auth = authenticate(request, username=username, password = password)
             if auth is not None:
-                login_user = login(request, user_login.username, user_login.password)
-
+                login_user = login(request,auth)
+               
                 new_apUser = ApUser.objects.create(user=new_user)
                 new_apUser.save()
                 return  Response({'data':f"{redirectTwitterPage()}"}, status=200)
@@ -107,7 +110,7 @@ def signin(request):
             return Response({'erreure': "Error authenfications user"}, status=400)
     return Response({"erreur": "Method Not Allowed"}, status=405)
 
-@login_required(login_url='signin')
+
 @api_view(['GET'])
 def logout(request):
     logout(request)
